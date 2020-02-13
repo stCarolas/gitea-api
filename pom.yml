@@ -1,0 +1,114 @@
+modelVersion: 4.0.0
+groupId: rocks.mango
+artifactId: gitea-api
+version: 1.0.0
+packaging: jar
+name: gitea-api
+properties: {
+  swagger-core-version: 1.5.18, 
+  java.version: 1.8, 
+  feign-version: 9.4.0,
+  junit-version: 4.12, 
+  feign-form-version: 2.1.0, 
+  maven.compiler.target: '${java.version}',
+  oltu-version: 1.0.1, 
+  project.build.sourceEncoding: UTF-8, 
+  maven-plugin-version: 1.0.0,
+  maven.compiler.source: '${java.version}', 
+  jackson-version: 2.8.9
+}
+dependencies:
+- {groupId: io.swagger, artifactId: swagger-annotations, version: '${swagger-core-version}'}
+- {groupId: io.github.openfeign, artifactId: feign-core, version: '${feign-version}'}
+- {groupId: io.github.openfeign, artifactId: feign-jackson, version: '${feign-version}'}
+- {groupId: io.github.openfeign, artifactId: feign-slf4j, version: '${feign-version}'}
+- {groupId: io.github.openfeign.form, artifactId: feign-form, version: '${feign-form-version}'}
+- {groupId: com.fasterxml.jackson.core, artifactId: jackson-core, version: '${jackson-version}'}
+- {groupId: com.fasterxml.jackson.core, artifactId: jackson-annotations, version: '${jackson-version}'}
+- {groupId: com.fasterxml.jackson.core, artifactId: jackson-databind, version: '${jackson-version}'}
+- {groupId: com.fasterxml.jackson.datatype, artifactId: jackson-datatype-jsr310, version: '${jackson-version}'}
+- {groupId: org.apache.oltu.oauth2, artifactId: org.apache.oltu.oauth2.client, version: '${oltu-version}'}
+- {groupId: junit, artifactId: junit, version: '${junit-version}', scope: test}
+- {groupId: com.squareup.okhttp3, artifactId: mockwebserver, version: 3.6.0, scope: test}
+- {groupId: org.assertj, artifactId: assertj-core, version: 1.7.1, scope: test}
+build:
+  plugins:
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-enforcer-plugin
+    version: 3.0.0-M1
+    executions:
+    - configuration:
+        rules:
+          requireMavenVersion: {version: 2.2.0}
+      goals: [enforce]
+      id: enforce-maven
+      inherited: true
+      priority: 0
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-surefire-plugin
+    version: 2.12
+    configuration:
+      systemProperties:
+        property: {name: loggerPath, value: conf/log4j.properties}
+      argLine: -Xms512m -Xmx1500m
+      parallel: methods
+      forkMode: pertest
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-dependency-plugin
+    executions:
+    - configuration: {outputDirectory: '${project.build.directory}/lib'}
+      goals: [copy-dependencies]
+      id: default
+      inherited: true
+      phase: package
+      priority: 0
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-jar-plugin
+    version: 2.2
+    configuration: {}
+    executions:
+    - goals: [jar, test-jar]
+      id: default
+      inherited: true
+      priority: 0
+  - groupId: org.codehaus.mojo
+    artifactId: build-helper-maven-plugin
+    version: 1.10
+    executions:
+    - configuration:
+        sources: [src/main/java]
+      goals: [add-source]
+      id: add_sources
+      inherited: true
+      phase: generate-sources
+      priority: 0
+    - configuration:
+        sources: [src/test/java]
+      goals: [add-test-source]
+      id: add_test_sources
+      inherited: true
+      phase: generate-test-sources
+      priority: 0
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-javadoc-plugin
+    version: 2.10.4
+    executions:
+    - goals: [jar]
+      id: attach-javadocs
+      inherited: true
+      priority: 0
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-source-plugin
+    version: 2.2.1
+    executions:
+    - goals: [jar-no-fork]
+      id: attach-sources
+      inherited: true
+      priority: 0
+
+repositories:
+  - {id: maven-central, layout: default, name: Maven Central, url: 'http://central.maven.org/maven2/'}
+
+distributionManagement:
+  repository: {id: bintray-stcarolas-maven, layout: default, uniqueVersion: true,
+    url: 'https://api.bintray.com/maven/stcarolas/maven/gitea-api/;publish=1'}

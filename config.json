@@ -1,0 +1,11 @@
+{
+    "library": "feign",
+    "java8": true,
+    "dateLibrary": "java8",
+    "groupId": "com.github.stcarolas.gitea",
+    "artifactId": "gitea-api",
+    "artifactVersion": "1.0.0",
+    "apiPackage": "com.github.stcarolas.gitea.api",
+    "modelPackage": "com.github.stcarolas.gitea.api"
+}
+
