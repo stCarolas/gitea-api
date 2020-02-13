@@ -28,5 +28,9 @@ jobs:
         with:
           maven-version: 3.5.4
   
-      - name: Publish
+      - name: Build
         run: ./build.sh
+  
+      - name: Publish
+        run: mvn -B -q deploy -Ddeploy.token=${{ secrets.BINTRAY_API_KEY }} -s .github/workflows/settings.xml
+

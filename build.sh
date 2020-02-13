@@ -10,4 +10,3 @@ java -jar swagger-codegen-cli-2.4.5.jar generate -l java -i gitea/templates/swag
 rm -rf src/test
 rm -rf pom.xml
 # use github variable to check and run only for github
-mvn -B -q deploy -Ddeploy.token=${{ secrets.BINTRAY_API_KEY }} -s .github/workflows/settings.xml
